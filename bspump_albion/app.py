@@ -1,16 +1,18 @@
 import bspump
 from bspump_albion.pipeline import SamplePipeline
+import bspump.kafka
+
 
 class BlankAppApplication(bspump.BSPumpApplication):
 
-	async def main(self):
+	def __init__(self):
+		super().__init__()
 		svc = self.get_service("bspump.PumpService")
 
-		# Create and register all connections here
+		svc.add_connection(
+			bspump.kafka.KafkaConnection(self, "KafkaConnection")
+		)
 
-		# Create and register all lookups here
-
-		# Create and register all pipelines here
-
-		pl = SamplePipeline(self, 'TCPPipeline')
-		svc.add_pipeline(pl)
+		svc.add_pipeline(
+			SamplePipeline(self, "SamplePipeline")
+		)

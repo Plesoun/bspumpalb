@@ -5,6 +5,8 @@ import bspump
 import bspump.common
 import bspump.http
 import bspump.trigger
+from bspump_albion.sink.mongo_sink import MongoSink
+from bspump_albion.transformator import ProcessorExample
 
 ###
 
@@ -20,9 +22,11 @@ class SamplePipeline(bspump.Pipeline):
 
 		self.build(
 			bspump.http.HTTPClientSource(app, self, config={
-				'url': "https://www.albion-online-data.com/api/v2/stats/prices/T6_HIDE.json"
-			}).on(bspump.trigger.PeriodicTrigger(app, 1)),
+				'url': "https://www.albion-online-data.com/api/v2/stats/prices/T6_HIDE"
+			}).on(bspump.trigger.PeriodicTrigger(app, 10)),
 			bspump.common.JsonBytesToDictParser(app, self),
-			bspump.common.PPrintSink(app, self),
+			ProcessorExample(app, self),
+#			bspump.common.PrintSink(app, self)
+			MongoSink(app, self),
 		)
 
